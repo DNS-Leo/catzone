@@ -1,5 +1,3 @@
-;; basic catalog zone
-
 $ORIGIN catzone.
 $TTL 14400
 @                         IN SOA    . . 1555507036 86400 14400 86400 14400
@@ -13,21 +11,6 @@ $ORIGIN zones.catzone.
 57822                        PTR    malabarista.coffee.
 65210                        PTR    globeofdeath.com.
 77404                        PTR    iomammetaetu.pizza.
-
-;; extra options
-
-allow-transfer          0 IN APL    ( 1:192.168.1.2/32, 1:192.168.1.3/32, 2:2a03:96a2::95de/128 )
-masters                 0 IN A      192.168.1.111
-masters                 0 IN A      192.168.1.222
-masters                 0 IN AAAA   2a03:96a2::111
-masters                 0 IN AAAA   2a03:96a2::222
-notifies                0 IN A      192.168.1.1
-notifies                0 IN A      192.168.1.2
-notifies                0 IN A      192.168.1.3
-notifies                0 IN AAAA   2a03:96a2::95de
-
-;; extended code that allows to iterate zone and compare SOA local/remote
-
 $ORIGIN x-info.catzone.
                              ZONEMD 1555507036 240 0 ( 8gelablablablaetc )
 0                            HINFO           "0" 17187
