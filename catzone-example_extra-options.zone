@@ -1,0 +1,24 @@
+$ORIGIN catzone.
+$TTL 14400
+@                                      IN SOA    . . 1555507036 86400 14400 86400 14400
+@                                         NS     invalid.
+version                              0 IN TXT    "1"
+$ORIGIN zones.catzone.
+2994957a552f357f9e49007e0462d3617354e9df  PTR    alila.dog.
+3d5f1f25bf803861058ec11a929e38c134cbc1f6  PTR    trouwauto.limo.
+2994957a552f357f9e49007e0462d3617354e9df  PTR    trouwauto.wedding.
+038aa43b8bf77211435f57ad25bcc1e6ba7b0e05  PTR    unicycle.show.
+43f984676423c0a9c30c8c635b3757dd2f820dff  PTR    malabarista.coffee.
+019559dd498f0b289662322fceb8f0c431d92193  PTR    globeofdeath.com.
+4498690ad458ebc22eeffb86ba2b7a1f181c3942  PTR    iomammetaetu.pizza.
+
+;; extra options
+allow-transfer          0 IN APL    ( 1:192.168.1.2/32, 1:192.168.1.3/32, 2:2a03:96a2::95de/128 )
+masters                 0 IN A      192.168.1.111
+masters                 0 IN A      192.168.1.222
+masters                 0 IN AAAA   2a03:96a2::111
+masters                 0 IN AAAA   2a03:96a2::222
+notifies                0 IN A      192.168.1.1
+notifies                0 IN A      192.168.1.2
+notifies                0 IN A      192.168.1.3
+notifies                0 IN AAAA   2a03:96a2::95de
