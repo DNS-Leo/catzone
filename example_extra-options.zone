@@ -3,6 +3,7 @@ $TTL 14400
 @                                      IN SOA    . . 1555507036 86400 14400 86400 14400
 @                                         NS     invalid.
 version                              0 IN TXT    "1"
+
 $ORIGIN zones.catzone.
 2994957a552f357f9e49007e0462d3617354e9df  PTR    alila.dog.
 3d5f1f25bf803861058ec11a929e38c134cbc1f6  PTR    trouwauto.limo.
