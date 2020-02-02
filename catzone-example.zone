@@ -1,0 +1,42 @@
+$ORIGIN catzone.
+$TTL 14400
+
+;; basic catalog zone
+
+@                                      IN SOA    . . 1555507036 86400 14400 86400 14400
+@                                         NS     invalid.
+@                                         ZONEMD 1552507036 1 0 ( 4ac63blablablaetc )
+version                              0 IN TXT    "2"
+$ORIGIN zones.catzone.
+17187                                     PTR    alila.dog.
+22820                                     PTR    trouwauto.limo.
+38734                                     PTR    trouwauto.wedding.
+47883                                     PTR    unicycle.show.
+57822                                     PTR    malabarista.coffee.
+65210                                     PTR    globeofdeath.com.
+77404                                     PTR    iomammetaetu.pizza.
+
+;; extra options
+
+allow-transfer    0 IN APL    ( 1:192.168.1.2/32, 1:192.168.1.3/32, 2:2a03:96a2::95de/128 )
+masters           0 IN A      192.168.1.111
+masters           0 IN A      192.168.1.222
+masters           0 IN AAAA   2a03:96a2::111
+masters           0 IN AAAA   2a03:96a2::222
+notifies          0 IN A      192.168.1.1
+notifies          0 IN A      192.168.1.2
+notifies          0 IN A      192.168.1.3
+notifies          0 IN AAAA   2a03:96a2::95de
+
+;; extended code that allows to iterate zone and compare SOA local/remote
+
+$ORIGIN x-info.catzone.
+                                          ZONEMD 1555507036 240 0 ( 8gelablablablaetc )
+0                                         HINFO           "0" 17187
+17187                                     HINFO  "1552202321" 22820
+22820                                     HINFO  "1552322222" 38734
+38734                                     HINFO  "1552232323" 47883
+47883                                     HINFO  "1552332324" 57822
+57822                                     HINFO  "1552242525" 65210
+65210                                     HINFO  "1552452726" 77404
+77404                                     HINFO  "1555262027" EoF
