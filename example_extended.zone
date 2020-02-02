@@ -3,6 +3,7 @@ $TTL 14400
 @                         IN SOA    . . 1555507036 86400 14400 86400 14400
 @                            NS     invalid.
 version                 0 IN TXT    "2"
+
 $ORIGIN zones.catzone.
 17187                        PTR    alila.dog.
 22820                        PTR    trouwauto.limo.
@@ -11,6 +12,7 @@ $ORIGIN zones.catzone.
 57822                        PTR    malabarista.coffee.
 65210                        PTR    globeofdeath.com.
 77404                        PTR    iomammetaetu.pizza.
+
 $ORIGIN x-info.catzone.
                              ZONEMD 1555507036 240 0 ( 8gelablablablaetc )
 0                            HINFO           "0" 17187
