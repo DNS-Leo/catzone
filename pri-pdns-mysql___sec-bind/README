@@ -1,1 +1,20 @@
-Bla, test
+Basic setup to have PowerDNS as catalog-zone master server:
+using two triggers which add the PTR records
+
+* MySQL
+Install MySQL server
+Start it
+Run the pdns.sql
+
+* Bind
+Install Bind server
+Replace named.conf - and check if values matches for you
+Start it
+
+* PowerDNS
+Install PowerDNS server
+Replace pdns.conf
+Start it
+
+If all went well then the example domains are now being served by both PowerDNS and Bind.
+One MySQL query like `DELETE FROM domains WHERE name='example.be'` will remove them at both.
