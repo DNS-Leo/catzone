@@ -1,5 +1,3 @@
-DROP TRIGGER  IF EXISTS catzone_add;
-DROP TRIGGER  IF EXISTS catzone_del;
 DROP DATABASE IF EXISTS pdns;
 CREATE DATABASE pdns;
 USE pdns;
@@ -94,7 +92,7 @@ CREATE UNIQUE INDEX namealgoindex ON tsigkeys(name, algorithm);
 -- ############################################################
 
 -- personal preference to obtain "data hygiene":
--- create constraight such that if you delete from domain table all records will be deleted also
+-- create constraight: if you delete from table `domain`, then all records for that zone will be deleted from `records`
 ALTER TABLE records ADD CONSTRAINT FOREIGN KEY domains (domain_id) REFERENCES domains(id) ON DELETE CASCADE;
 
 -- insert the catzone records except PTR's:
@@ -106,6 +104,7 @@ INSERT INTO records (domain_id, name, ttl, type, content) VALUES
 (1, 'version.catzone',     0, 'TXT', '2');
 
 -- trigger which will insert catalog PTR's on domain insert
+DROP TRIGGER  IF EXISTS catzone_add;
 delimiter //
 CREATE TRIGGER `catzone_add` AFTER INSERT ON domains
 FOR EACH ROW BEGIN
@@ -122,6 +121,7 @@ UPDATE records SET content = CONCAT('localhost admin.localhost ', (@'s' + 1), ' 
 delimiter ;
 
 -- trigger which will delete catalog PTR's on domain removal
+DROP TRIGGER  IF EXISTS catzone_del;
 delimiter //
 CREATE TRIGGER `catzone_del` AFTER DELETE ON domains
 FOR EACH ROW BEGIN
@@ -134,51 +134,9 @@ UPDATE records SET content = CONCAT('localhost admin.localhost ', (@'s' + 1), ' 
 //
 delimiter ;
 
--- set two variables
-SELECT 2, 'example.be' INTO @'i',@'d';
--- two "insert querys":
-INSERT INTO domains (id, name, type) VALUES (@'i', @'d', 'NATIVE');
-INSERT INTO records (domain_id, name, ttl, type, prio, content) VALUES
-(@'i',                     @'d' , 86400, 'SOA' , NULL, 'localhost admin.example.net 1 10380 3600 604800 3600'),
-(@'i',                     @'d' , 86400, 'NS'  , NULL, 'ns1.example.net'),
-(@'i',                     @'d' , 86400, 'NS'  , NULL, 'ns2.example.net'),
-(@'i', CONCAT(      'www.',@'d'),   120, 'A'   , NULL, '192.168.0.80'),
-(@'i', CONCAT(      'www.',@'d'),   120, 'AAAA', NULL, 'fe00::80'),
-(@'i', CONCAT('localhost.',@'d'),   120, 'A'   , NULL, '127.0.0.1'),
-(@'i',                     @'d' ,   120, 'MX'  ,   10, 'mx1.example.net'),
-(@'i',                     @'d' ,   120, 'MX'  ,   20, 'mx2.example.net');
-
 -- set two variables:
-SELECT 3, 'example.cz' INTO @'i',@'d';
--- repeat the two inserts above
-INSERT INTO domains (id, name, type) VALUES (@'i', @'d', 'NATIVE');
-INSERT INTO records (domain_id, name, ttl, type, prio, content) VALUES
-(@'i',                     @'d' , 86400, 'SOA' , NULL, 'localhost admin.example.net 1 10380 3600 604800 3600'),
-(@'i',                     @'d' , 86400, 'NS'  , NULL, 'ns1.example.net'),
-(@'i',                     @'d' , 86400, 'NS'  , NULL, 'ns2.example.net'),
-(@'i', CONCAT(      'www.',@'d'),   120, 'A'   , NULL, '192.168.0.80'),
-(@'i', CONCAT(      'www.',@'d'),   120, 'AAAA', NULL, 'fe00::80'),
-(@'i', CONCAT('localhost.',@'d'),   120, 'A'   , NULL, '127.0.0.1'),
-(@'i',                     @'d' ,   120, 'MX'  ,   10, 'mx1.example.net'),
-(@'i',                     @'d' ,   120, 'MX'  ,   20, 'mx2.example.net');
-
--- set two variables:
-SELECT 4, 'example.nl' INTO @'i',@'d';
--- repeat the two inserts
-INSERT INTO domains (id, name, type) VALUES (@'i', @'d', 'NATIVE');
-INSERT INTO records (domain_id, name, ttl, type, prio, content) VALUES
-(@'i',                     @'d' , 86400, 'SOA' , NULL, 'localhost admin.example.net 1 10380 3600 604800 3600'),
-(@'i',                     @'d' , 86400, 'NS'  , NULL, 'ns1.example.net'),
-(@'i',                     @'d' , 86400, 'NS'  , NULL, 'ns2.example.net'),
-(@'i', CONCAT(      'www.',@'d'),   120, 'A'   , NULL, '192.168.0.80'),
-(@'i', CONCAT(      'www.',@'d'),   120, 'AAAA', NULL, 'fe00::80'),
-(@'i', CONCAT('localhost.',@'d'),   120, 'A'   , NULL, '127.0.0.1'),
-(@'i',                     @'d' ,   120, 'MX'  ,   10, 'mx1.example.net'),
-(@'i',                     @'d' ,   120, 'MX'  ,   20, 'mx2.example.net');
-
--- set two variables:
-SELECT 5, 'example.us' INTO @'i',@'d';
--- repeat the two inserts
+SELECT 2, 'example.nl' INTO @'i',@'d';
+-- two insert queries
 INSERT INTO domains (id, name, type) VALUES (@'i', @'d', 'NATIVE');
 INSERT INTO records (domain_id, name, ttl, type, prio, content) VALUES
 (@'i',                     @'d' , 86400, 'SOA' , NULL, 'localhost admin.example.net 1 10380 3600 604800 3600'),
