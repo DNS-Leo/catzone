@@ -11,7 +11,7 @@ using two triggers which add the PTR records
 
 ## Bind
 - Install Bind server
-- Replace named.conf - and check if values matches for you
+- Replace named.conf - and check if values for `directory` matches for you
 - Start it
 
 ## PowerDNS
