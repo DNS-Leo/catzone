@@ -1,5 +1,4 @@
-DROP DATABASE IF EXISTS pdns;
-CREATE DATABASE pdns;
+CREATE DATABASE IF NOT EXISTS pdns;
 USE pdns;
 
 -- the next queries are all equal to https://doc.powerdns.com/authoritative/guides/basic-database.html
@@ -91,8 +90,8 @@ CREATE UNIQUE INDEX namealgoindex ON tsigkeys(name, algorithm);
 
 -- ############################################################
 
--- personal preference to obtain "data hygiene":
--- create constraight: if you delete from table `domain`, then all records for that zone will be deleted from `records`
+-- personal preference to obtain "data hygiene", create constraight:
+-- if you delete from table `domain`, then all records for that zone will be deleted from `records`
 ALTER TABLE records ADD CONSTRAINT FOREIGN KEY domains (domain_id) REFERENCES domains(id) ON DELETE CASCADE;
 
 -- insert the catzone records except PTR's:
