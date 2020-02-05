@@ -5,8 +5,9 @@ DROP   DATABASE IF     EXISTS pdns;
 CREATE DATABASE IF NOT EXISTS pdns;
 USE pdns;
 
+-- ###################################################################################################
 -- the next queries are all equal to https://doc.powerdns.com/authoritative/guides/basic-database.html
--- ############################################################
+-- ###################################################################################################
 
 CREATE TABLE domains (
   id                    INT AUTO_INCREMENT,
@@ -92,7 +93,8 @@ CREATE TABLE tsigkeys (
 
 CREATE UNIQUE INDEX namealgoindex ON tsigkeys(name, algorithm);
 
--- ############################################################
+-- ###################################################################################################
+-- ###################################################################################################
 
 -- personal preference to obtain "data hygiene", create constraight:
 -- if you delete from table `domain`, then all records for that zone will be deleted from `records`
@@ -106,7 +108,7 @@ INSERT INTO records (domain_id, name, ttl, type, content) VALUES
 (1,         'catzone', 14400, 'NS',  'ns2.example.net'),
 (1, 'version.catzone',     0, 'TXT', '2');
 
--- trigger which will insert catalog PTR's on domain insert
+-- trigger to insert catalog PTR's on domain insert
 DROP TRIGGER  IF EXISTS catzone_add;
 delimiter //
 CREATE TRIGGER `catzone_add` AFTER INSERT ON domains
@@ -116,28 +118,31 @@ FOR EACH ROW BEGIN
        INSERT INTO records (domain_id, name, type, content) VALUES(1, CONCAT(NEW.id, '.zones.catzone'), 'PTR', CONCAT(NEW.name,'.'));
    END IF;
 END;
+-- extract SOA serial and bump the catalog zone's SOA:
 SELECT LENGTH(SUBSTRING_INDEX(content, ' ', 2))      FROM records WHERE type='SOA' AND domain_id=1 INTO @'a';
 SELECT LENGTH(SUBSTRING_INDEX(content, ' ', 3))      FROM records WHERE type='SOA' AND domain_id=1 INTO @'b';
 SELECT SUBSTRING(content, (2 + @'a'), (@'b' - @'a')) FROM records WHERE type='SOA' AND domain_id=1 INTO @'s';
-UPDATE records SET content = CONCAT('localhost admin.localhost ', (@'s' + 1), ' 86400 14400 86400 14400') WHERE domain_id=1 AND type='SOA';
+UPDATE records SET content = CONCAT('localhost admin.localhost ', UNIX_TIMESTAMP(), ' 86400 14400 86400 14400') WHERE domain_id=1 AND type='SOA';
 //
 delimiter ;
 
--- trigger which will delete catalog PTR's on domain removal
+-- trigger to delete catalog PTR's on domain removal
 DROP TRIGGER  IF EXISTS catzone_del;
 delimiter //
 CREATE TRIGGER `catzone_del` AFTER DELETE ON domains
 FOR EACH ROW BEGIN
    DELETE FROM records WHERE domain_id=1 AND type='PTR' AND name=CONCAT(OLD.id, '.zones.catzone');
 END;
+-- extract SOA serial and bump the catalog zone's SOA:
 SELECT LENGTH(SUBSTRING_INDEX(content, ' ', 2))      FROM records WHERE type='SOA' AND domain_id=1 INTO @'a';
 SELECT LENGTH(SUBSTRING_INDEX(content, ' ', 3))      FROM records WHERE type='SOA' AND domain_id=1 INTO @'b';
 SELECT SUBSTRING(content, (2 + @'a'), (@'b' - @'a')) FROM records WHERE type='SOA' AND domain_id=1 INTO @'s';
-UPDATE records SET content = CONCAT('localhost admin.localhost ', (@'s' + 1), ' 86400 14400 86400 14400') WHERE domain_id=1 AND type='SOA';
+UPDATE records SET content = CONCAT('localhost admin.localhost ', UNIX_TIMESTAMP(), ' 86400 14400 86400 14400') WHERE domain_id=1 AND type='SOA';
 //
 delimiter ;
 
--- set two variables:
+-- The next 3 queries can easily be recycled to insert multiple domains
+-- set two variables (domain id, zone apex):
 SELECT 2, 'example.nl' INTO @'i',@'d';
 -- two insert queries
 INSERT INTO domains (id, name, type) VALUES (@'i', @'d', 'NATIVE');
@@ -150,5 +155,3 @@ INSERT INTO records (domain_id, name, ttl, type, prio, content) VALUES
 (@'i', CONCAT('localhost.',@'d'),   120, 'A'   , NULL, '127.0.0.1'),
 (@'i',                     @'d' ,   120, 'MX'  ,   10, 'mx1.example.net'),
 (@'i',                     @'d' ,   120, 'MX'  ,   20, 'mx2.example.net');
-
--- the last 3 queries can easily be recycled to insert more domains
