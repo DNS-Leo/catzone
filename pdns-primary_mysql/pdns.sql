@@ -1,3 +1,7 @@
+-- This code will make MySQL automaintain one single master catalog-zone containing all zones
+-- That catalog-zone is using "1" as zone_id "1" (so should be available).
+
+DROP   DATABASE IF     EXISTS pdns;
 CREATE DATABASE IF NOT EXISTS pdns;
 USE pdns;
 
@@ -146,3 +150,5 @@ INSERT INTO records (domain_id, name, ttl, type, prio, content) VALUES
 (@'i', CONCAT('localhost.',@'d'),   120, 'A'   , NULL, '127.0.0.1'),
 (@'i',                     @'d' ,   120, 'MX'  ,   10, 'mx1.example.net'),
 (@'i',                     @'d' ,   120, 'MX'  ,   20, 'mx2.example.net');
+
+-- the last 3 queries can easily be recycled to insert more domains
