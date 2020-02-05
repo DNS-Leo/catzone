@@ -118,10 +118,6 @@ FOR EACH ROW BEGIN
        INSERT INTO records (domain_id, name, type, content) VALUES(1, CONCAT(NEW.id, '.zones.catzone'), 'PTR', CONCAT(NEW.name,'.'));
    END IF;
 END;
--- extract SOA serial and bump the catalog zone's SOA:
-SELECT LENGTH(SUBSTRING_INDEX(content, ' ', 2))      FROM records WHERE type='SOA' AND domain_id=1 INTO @'a';
-SELECT LENGTH(SUBSTRING_INDEX(content, ' ', 3))      FROM records WHERE type='SOA' AND domain_id=1 INTO @'b';
-SELECT SUBSTRING(content, (2 + @'a'), (@'b' - @'a')) FROM records WHERE type='SOA' AND domain_id=1 INTO @'s';
 UPDATE records SET content = CONCAT('localhost admin.localhost ', UNIX_TIMESTAMP(), ' 86400 14400 86400 14400') WHERE domain_id=1 AND type='SOA';
 //
 delimiter ;
@@ -133,10 +129,6 @@ CREATE TRIGGER `catzone_del` AFTER DELETE ON domains
 FOR EACH ROW BEGIN
    DELETE FROM records WHERE domain_id=1 AND type='PTR' AND name=CONCAT(OLD.id, '.zones.catzone');
 END;
--- extract SOA serial and bump the catalog zone's SOA:
-SELECT LENGTH(SUBSTRING_INDEX(content, ' ', 2))      FROM records WHERE type='SOA' AND domain_id=1 INTO @'a';
-SELECT LENGTH(SUBSTRING_INDEX(content, ' ', 3))      FROM records WHERE type='SOA' AND domain_id=1 INTO @'b';
-SELECT SUBSTRING(content, (2 + @'a'), (@'b' - @'a')) FROM records WHERE type='SOA' AND domain_id=1 INTO @'s';
 UPDATE records SET content = CONCAT('localhost admin.localhost ', UNIX_TIMESTAMP(), ' 86400 14400 86400 14400') WHERE domain_id=1 AND type='SOA';
 //
 delimiter ;
