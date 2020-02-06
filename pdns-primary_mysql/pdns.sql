@@ -1,13 +1,14 @@
 -- This code will make MySQL automaintain one single master catalog-zone containing all zones
--- That catalog-zone is using "1" as zone_id "1" (so should be available).
+-- NOTE: the catalog-zone is depending on using "1" as zone_id "1" (so should be available).
 
-DROP   DATABASE IF     EXISTS pdns;
-CREATE DATABASE IF NOT EXISTS pdns;
-USE pdns;
+-- in case you wish to start with an empty DB:
+-- DROP   DATABASE IF     EXISTS pdns;
+-- CREATE DATABASE IF NOT EXISTS pdns;
+-- USE pdns;
 
--- ###################################################################################################
--- the next queries are all equal to https://doc.powerdns.com/authoritative/guides/basic-database.html
--- ###################################################################################################
+-- ##########################################################################################################
+-- the next CREATE queries are identical to https://doc.powerdns.com/authoritative/guides/basic-database.html
+-- ##########################################################################################################
 
 CREATE TABLE domains (
   id                    INT AUTO_INCREMENT,
@@ -96,40 +97,53 @@ CREATE UNIQUE INDEX namealgoindex ON tsigkeys(name, algorithm);
 -- ###################################################################################################
 -- ###################################################################################################
 
--- personal preference to obtain "data hygiene", create constraight:
--- if you delete from table `domain`, then all records for that zone will be deleted from `records`
-ALTER TABLE records ADD CONSTRAINT FOREIGN KEY domains (domain_id) REFERENCES domains(id) ON DELETE CASCADE;
+-- #### some personal prefereces
 
--- insert the catzone records except PTR's:
+-- keep records valid:
+ALTER TABLE domains CHARACTER SET 'ascii';
+ALTER TABLE records CHARACTER SET 'ascii';
+
+-- obtain data-hygiene:
+ALTER TABLE records ADD CONSTRAINT FOREIGN KEY domains (domain_id) REFERENCES domains(id) ON DELETE CASCADE;
+-- so when deleting from table `domain` all corresponding records will be deleted from `records`
+
+-- prevent duplicate records
+delimiter //
+CREATE TRIGGER `unique_record` BEFORE INSERT ON records
+FOR EACH ROW BEGIN
+  IF( SELECT COUNT(*) FROM records WHERE name=NEW.name AND type=NEW.type AND content=NEW.content) > 0
+  THEN
+    SIGNAL SQLSTATE '45000' SET message_text = 'DNS record alread exist';
+  END IF;
+END;
+//
+delimiter ;
+
+-- insert the catzone:
 INSERT INTO domains (id, name, type) VALUES (1, 'catzone', 'NATIVE');
 INSERT INTO records (domain_id, name, ttl, type, content) VALUES
-(1,         'catzone', 14400, 'SOA', 'localhost admin.localhost 1 86400 14400 86400 14400'),
+(1,         'catzone', 14400, 'SOA', 'localhost admin.localhost 1'),
 (1,         'catzone', 14400, 'NS',  'ns1.example.net'),
 (1,         'catzone', 14400, 'NS',  'ns2.example.net'),
 (1, 'version.catzone',     0, 'TXT', '2');
 
--- trigger to insert catalog PTR's on domain insert
-DROP TRIGGER  IF EXISTS catzone_add;
+-- insert catalog-zone PTR on domain insert
 delimiter //
 CREATE TRIGGER `catzone_add` AFTER INSERT ON domains
 FOR EACH ROW BEGIN
-   IF (SELECT COUNT(*) FROM records WHERE domain_id=1 AND type='PTR' AND name=NEW.name) < 1
-     THEN
-       INSERT INTO records (domain_id, name, type, content) VALUES(1, CONCAT(NEW.id, '.zones.catzone'), 'PTR', CONCAT(NEW.name,'.'));
-   END IF;
+  INSERT INTO records (domain_id, name, type, content) VALUES(1, CONCAT(NEW.id, '.zones.catzone'), 'PTR', CONCAT(NEW.name,'.'));
+  UPDATE records SET content=CONCAT('localhost admin.localhost', ' ', UNIX_TIMESTAMP()) WHERE domain_id=1 AND type='SOA';
 END;
-UPDATE records SET content = CONCAT('localhost admin.localhost ', UNIX_TIMESTAMP(), ' 86400 14400 86400 14400') WHERE domain_id=1 AND type='SOA';
 //
 delimiter ;
 
--- trigger to delete catalog PTR's on domain removal
-DROP TRIGGER  IF EXISTS catzone_del;
+-- delete catalog-zone PTR on domain removal
 delimiter //
 CREATE TRIGGER `catzone_del` AFTER DELETE ON domains
 FOR EACH ROW BEGIN
-   DELETE FROM records WHERE domain_id=1 AND type='PTR' AND name=CONCAT(OLD.id, '.zones.catzone');
+  DELETE FROM records WHERE domain_id=1 AND type='PTR' AND content=CONCAT(OLD.name, '.');
+  UPDATE records SET content=CONCAT('localhost admin.localhost', ' ', UNIX_TIMESTAMP()) WHERE domain_id=1 AND type='SOA';
 END;
-UPDATE records SET content = CONCAT('localhost admin.localhost ', UNIX_TIMESTAMP(), ' 86400 14400 86400 14400') WHERE domain_id=1 AND type='SOA';
 //
 delimiter ;
 
@@ -139,7 +153,7 @@ SELECT 2, 'example.nl' INTO @'i',@'d';
 -- two insert queries
 INSERT INTO domains (id, name, type) VALUES (@'i', @'d', 'NATIVE');
 INSERT INTO records (domain_id, name, ttl, type, prio, content) VALUES
-(@'i',                     @'d' , 86400, 'SOA' , NULL, 'localhost admin.example.net 1 10380 3600 604800 3600'),
+(@'i',                     @'d' , 86400, 'SOA' , NULL, 'localhost admin.example.net 1'),
 (@'i',                     @'d' , 86400, 'NS'  , NULL, 'ns1.example.net'),
 (@'i',                     @'d' , 86400, 'NS'  , NULL, 'ns2.example.net'),
 (@'i', CONCAT(      'www.',@'d'),   120, 'A'   , NULL, '192.168.0.80'),
