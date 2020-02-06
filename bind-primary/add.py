@@ -8,7 +8,7 @@ import dns.update
 import dns.name
 import hashlib
 
-ZONEPATH='/tmp/'
+ZONEPATH='/zones/'
 MASTER='127.0.0.1'
 DNSPORT=53
 RNDCPORT=953
