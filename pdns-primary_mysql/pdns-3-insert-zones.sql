@@ -1,3 +1,5 @@
+USE pdns;
+
 -- The next 3 queries can easily be recycled to insert multiple domains
 -- set two variables (domain id, zone apex):
 SELECT 2, 'example.nl' INTO @'i',@'d';
