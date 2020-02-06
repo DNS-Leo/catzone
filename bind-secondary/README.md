@@ -9,4 +9,6 @@ Basic setup to have Bind as catalog-zone secondary server:
 - Place (or replace) named.conf
 - Create the directories `mkdir -p /usr/local/etc/named/{zones,zones-cat}`
 - Start Bind
-- Test `dig @127.0.0.2 example.com`
+
+## Step 3: Test
+- `dig @127.0.0.2 example.com`
