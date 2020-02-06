@@ -7,6 +7,8 @@ Basic setup to have Bind as catalog-zone primary server:
 ## Step 2: Bind
 - Install Bind
 - Place (or replace) named.conf
+- Create the directories `mkdir -p /usr/local/etc/named/{working,zones}`
+- Place zonefiles (catzone.zone, example.com.zone, example.org.zone) in the zones directory
 - Start Bind
 - Test `dig @127.0.0.1 -t AXFR catzone`
 - Test `dig @127.0.0.1 example.com`
