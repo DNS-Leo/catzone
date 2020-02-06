@@ -17,19 +17,19 @@ using two triggers which add the PTR records
 - Replace pdns.conf
 - Start it
 
-###### If all went well then the example domains are now being served by PowerDNS and the catalog zone is to.
+##### If all went well then the example domains are now being served by PowerDNS and the catalog zone is to.
 Test with:
 
 `dig @127.0.0.1 example.be`
 
 `dig @127.0.0.1 -t AXFR catzone`
 
-###### When you have setup a secondary it now would do to.
+##### When you have setup a secondary it now would do to.
 Test with:
 
 `dig @127.0.0.2 example.be`
 
-###### So one MySQL query like `DELETE FROM domains WHERE name='example.be'` will delete the domains and it's records from both.
+##### So one MySQL query like `DELETE FROM domains WHERE name='example.be'` will delete the domains and it's records from both.
 Test with:
 
 `dig @127.0.0.1 example.be`
