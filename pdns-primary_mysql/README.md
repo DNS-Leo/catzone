@@ -29,7 +29,7 @@ Test with:
 
 `dig @127.0.0.2 example.com`
 
-So one MySQL query like `DELETE FROM domains WHERE name='example.be'` will delete the domains and it's records from both.
+So one MySQL query like `DELETE FROM domains WHERE name='example.com'` will delete the domains and it's records from both.
 Test with:
 
 `dig @127.0.0.1 example.com`
