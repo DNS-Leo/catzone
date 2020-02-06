@@ -1,15 +1,18 @@
 Basic setup to have PowerDNS as catalog-zone master server:
 using two triggers which add the PTR records
 
-## Server
-- Besides having 127.0.0.1 (pri) add 127.0.0.2 (sec)
+## Step 1: Server
+- In all these examples we have the primary on 127.0.0.1 and secondary on 127.0.0.2
+  Make sure these IP's are available.
 
-## MySQL
+## Step 2: MySQL
 - Install MySQL server
 - Start it
-- Run the pdns.sql
+- Run `root@localhost [(none)]> \. pdns-1-create-db.sql`
+- Run `root@localhost [(pdns)]> \. pdns-2-catzone-and-triggers.sql`
+- Run `root@localhost [(pdns)]> \. pdns-3-insert-zones.sql`
 
-## PowerDNS
+## Step 3: PowerDNS
 - Install PowerDNS server
 - Replace pdns.conf
 - Start it
