@@ -17,5 +17,8 @@ using two triggers which add the PTR records
 - Replace pdns.conf
 - Start it
 
-If all went well then the example domains are now being served by both PowerDNS and the secondary.
-One MySQL query like `DELETE FROM domains WHERE name='example.be'` will the domains and it's records from both.
+If all went well then the example domains are now being served by PowerDNS and the catalog zone is to.
+
+When you have setup a secondary it now would do to.
+
+So one MySQL query like `DELETE FROM domains WHERE name='example.be'` will delete the domains and it's records from both.
