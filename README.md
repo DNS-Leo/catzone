@@ -9,4 +9,4 @@ The most recent (but expired) RFC draft (till date):
 
 More info:
 
-  (dns.company/catzone)[https://dns.company/catzone]
+  (dns.company/catzone)https://dns.company/catzone
