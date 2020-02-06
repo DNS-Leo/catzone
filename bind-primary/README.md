@@ -1,3 +1,10 @@
+## Todo in this directory:
+- fix TSIG at all places
+- create example.com.zone
+- create example.org.zone
+- verifiy add.py
+- finish del.py
+
 Basic setup to have Bind as catalog-zone primary server:
 
 ## Step 1: Server
