@@ -5,7 +5,7 @@ Basic setup to have Bind as catalog-zone primary server:
   Make sure these IP's are available.
 
 ## Step 2: Bind
-- Install Bind
+- Install Bind, make sure to include the ISC python module.
 - Place (or replace) named.conf
 - Create the directories `mkdir -p /usr/local/etc/named/{working,zones}`
 - Place zonefiles `catzone.zone`, `example.com.zone`, `example.org.zone` in the `zones` directory
@@ -17,7 +17,8 @@ Basic setup to have Bind as catalog-zone primary server:
 - Test `dig @127.0.0.2 example.org` - should return NXDOMAIN (on condition you run already a secondary)
 
 ## Step 3: Additional
-- place `add.py` and `del.py` in `/usr/local/etc/named`
+- Install dnspython
+- Place `add.py` and `del.py` in `/usr/local/etc/named`
 - Run `./add.py example.org`
 - Test `dig @127.0.0.1 example.org` - should return NOERROR
 - Test `dig @127.0.0.2 example.org` - should return NOERROR (on condition you run already a secondary)
