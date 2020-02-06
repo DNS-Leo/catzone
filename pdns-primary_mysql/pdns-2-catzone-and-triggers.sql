@@ -1,3 +1,5 @@
+USE pdns;
+
 -- <some personal prefereces> ##########################
 
 -- prevent invalid records:
