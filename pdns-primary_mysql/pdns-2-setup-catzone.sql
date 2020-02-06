@@ -30,7 +30,7 @@ INSERT INTO records (domain_id, name, ttl, type, content) VALUES
 (1,         'catzone', 14400, 'NS',  'ns2.example.net'),
 (1, 'version.catzone',     0, 'TXT', '2');
 
--- insert catalog-zone PTR on domain insert
+-- insert catalog-zone PTR record on inserts on `domain`
 delimiter //
 CREATE TRIGGER `catzone_add` AFTER INSERT ON domains
 FOR EACH ROW BEGIN
@@ -40,7 +40,7 @@ END;
 //
 delimiter ;
 
--- delete catalog-zone PTR on domain removal
+-- delete catalog-zone PTR record on deletes on `domain`
 delimiter //
 CREATE TRIGGER `catzone_del` AFTER DELETE ON domains
 FOR EACH ROW BEGIN
