@@ -4,8 +4,6 @@ $TTL 14400
 @                            NS     ns.invalid.
 version                 0 IN TXT    "2"
 
-;; Mind that without protection this zone can also be iterated with other intentions.
-
 $ORIGIN zones.catzone.
 17187                        PTR    alila.dog.
 22820                        PTR    trouwauto.limo.
