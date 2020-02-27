@@ -1,7 +1,19 @@
 -- in case you wish to start with an empty DB:
--- DROP   DATABASE IF     EXISTS pdns;
-CREATE DATABASE IF NOT EXISTS pdns;
-USE pdns;
+-- DROP DATABASE IF    EXISTS powerdns;
+CREATE DATABASE IF NOT EXISTS powerdns;
+
+CREATE USER 'powerdns'@'localhost';
+
+-- MySQL with "auth_socket" plugin:
+-- CREATE USER 'powerdns'@'localhost' IDENTIFIED WITH auth_socket AS 'bind';
+
+-- When using MariaDB:
+-- CREATE USER powerdns IDENTIFIED VIA unix_socket;
+
+GRANT ALL PRIVILEGES ON powerdns.* TO 'powerdns'@'localhost';
+
+FLUSH PRIVILEGES;
+USE powerdns;
 
 -- #################################################################
 -- the next CREATE queries are identical to
