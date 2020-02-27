@@ -1,4 +1,4 @@
-USE pdns;
+USE powerdns;
 
 -- The next 3 queries can easily be recycled to insert multiple domains
 -- set two variables (domain id, zone apex):
