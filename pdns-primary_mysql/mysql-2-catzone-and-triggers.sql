@@ -6,11 +6,13 @@ USE pdns;
 ALTER TABLE domains CHARACTER SET 'ascii';
 ALTER TABLE records CHARACTER SET 'ascii';
 
--- prevent dormant records:
-ALTER TABLE records ADD CONSTRAINT FOREIGN KEY domains (domain_id) REFERENCES domains(id) ON DELETE CASCADE;
--- so when deleting from table `domain` all corresponding records will be deleted from `records`
+-- prevent dormant data - taken from https://doc.powerdns.com/authoritative/backends/generic-mysql.html#setting-gmysql-socket
+ALTER TABLE records        ADD CONSTRAINT        `records_domain_id_ibfk` FOREIGN KEY (domain_id) REFERENCES domains(id) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE comments       ADD CONSTRAINT       `comments_domain_id_ibfk` FOREIGN KEY (domain_id) REFERENCES domains(id) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE domainmetadata ADD CONSTRAINT `domainmetadata_domain_id_ibfk` FOREIGN KEY (domain_id) REFERENCES domains(id) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE cryptokeys     ADD CONSTRAINT     `cryptokeys_domain_id_ibfk` FOREIGN KEY (domain_id) REFERENCES domains(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
--- prevent duplicate records - workaround `content`s VARCHAR(84000) makes UNIQUE KEY impossible
+-- prevent duplicate records - workaround, because `content`s VARCHAR(84000) makes UNIQUE KEY impossible
 delimiter //
 CREATE TRIGGER `unique_record` BEFORE INSERT ON records
 FOR EACH ROW BEGIN
