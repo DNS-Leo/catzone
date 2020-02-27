@@ -1,4 +1,4 @@
-USE pdns;
+USE powerdns;
 
 -- <some personal prefereces> ##########################
 
