@@ -1,40 +1,36 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3.7
 
-import sys
-import os
-import isc
+import os, sys
+import isc.rndc
 import dns.query
 import dns.update
-import dns.name
-import hashlib
 
-ZONEPATH='/zones/'
+ZONEPATH='zones/'
 MASTER='127.0.0.1'
 DNSPORT=53
 RNDCPORT=953
 RNDCALGO='sha256'
-RNDCKEY='e3pzIpblablablaetcetcetc+PQ='
+RNDCKEY='U7oTLYsJTzJoB7E7x/I/VIYIXSTjhzHzLhrqMx3qxpk='
 CATZONE='catzone'
 
 def add_zone():
 
   # domain:
-  d = sys.argv[1]
+  d,i = sys.argv[1], sys.argv[2]
   
   # add the zone:
-  h = hashlib.sha1(dns.name.from_text(d).to_wire()).hexdigest()
-  r = isc.rndc((MASTER, RNDCPORT), RNDCALGO, RNDCKEY)  
-  response = r.call('addzone %s {type master; file "zones/%s.db";};' % (d, d))
-  if response['result'] != '0':
-    raise Exception("Error adding zone to master: %s" % response['err'])
-  print ("added zone %s" %d)
+  r = isc.rndc((MASTER, RNDCPORT), RNDCALGO, RNDCKEY)
+  response = r.call('addzone %s {type master; file "%s%s.zone";};' % (d, ZONEPATH, d))
+  if response['result'] != b'0':
+    raise Exception("Error adding zone to master: %s" % (b"%s" % response['err']))
+  print ("added zone %s (%s)" % (d, i))
 
   # add PTR to catalog zone using DDNS:
   update = dns.update.Update(CATZONE)
-  update.add('%s.zones' % h, 3600, 'PTR', '%s.' % d)  
+  update.add('%s.zones' % i, 3600, 'PTR', '%s.' % d)  
   response = dns.query.tcp(update, MASTER, port=DNSPORT)  
   if response.rcode() != 0:
     raise Exception("Error updating catalog zone: %d" % response.rcode())
-  print ("added record: %s.zones 3600 PTR %s." % (h, d))
+  print ("added record: %s.zones 3600 PTR %s." % (i, d))
 
 add_zone()
