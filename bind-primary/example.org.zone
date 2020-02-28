@@ -1,0 +1,11 @@
+$ORIGIN example.org.
+$TTL 86400
+@	SOA	ns1 hostmaster ( 2020022222 21600 3600 604800 86400 )
+	NS	ns1
+	NS	ns2
+	MX	10 mx1
+	MX	20 mx2
+ns1	A	127.0.0.1
+ns2	A	127.0.0.2
+mx1	A	127.0.0.25
+mx2	A	127.0.0.26
