@@ -1,37 +1,32 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3.7
 
-import sys
-import os
-import isc
+import os, sys
+import isc.rndc
 import dns.query
 import dns.update
-import dns.name
-import hashlib
 
-ZONEPATH='/zones/'
 MASTER='127.0.0.1'
 DNSPORT=53
 RNDCPORT=953
 RNDCALGO='sha256'
-RNDCKEY='e3pzIpblablablaetcetcetc+PQ='
+RNDCKEY='U7oTLYsJTzJoB7E7x/I/VIYIXSTjhzHzLhrqMx3qxpk='
 CATZONE='catzone'
 
-def add_zone():
+def del_zone():
 
   # domain:
-  d = sys.argv[1]
-  
-  # add the zone:
-  h = hashlib.sha1(dns.name.from_text(d).to_wire()).hexdigest()
-  # bla / todo
+  d,i = sys.argv[1], sys.argv[2]
 
-  # add PTR to catalog zone using DDNS:
+  # Update catalog zone
   update = dns.update.Update(CATZONE)
-  # bla / todo
-  #  update.del('%s.zones' % h, 3600, 'PTR', '%s.' % d)  
-  #  response = dns.query.tcp(update, MASTER, port=DNSPORT)  
-  #  if response.rcode() != 0:
-  #    raise Exception("Error updating catalog zone: %d" % response.rcode())
-  #  print ("added record: %s.zones 3600 PTR %s." % (h, d))
-
+  update.delete('%s.zones' % i)
+  response = dns.query.tcp(update, MASTER, port=DNSPORT)
+  if response.rcode() != 0:
+    raise Exception("Error updating catalog zone: %s" % response.rcode())
+     
+  # Delete zone from master using RNDC
+  r = isc.rndc((MASTER, RNDCPORT), RNDCALGO, RNDCKEY)
+  response = r.call('delzone -clean %s' % d)
+  # -clean also delete zonefile and journal
+     
 del_zone()
