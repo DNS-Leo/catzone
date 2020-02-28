@@ -9,7 +9,7 @@ Basic setup to have Bind as catalog-zone primary server:
 - Place (or replace) named.conf
 - Create the directories `mkdir -p /usr/local/etc/named/zones`
 - Change the directories `chown -R 53:53 /usr/local/etc/named`
-- Place zonefiles `catzone.zone`, `example.com.zone` & `example.org.zone` in the `zones` directory
+- Place zonefiles all `*.zone` files in the `zones` directory
 - Start Bind
 - Test `dig @127.0.0.1 -t AXFR catzone`
 - Test `dig @127.0.0.1 example.com` - should return NXDOMAIN
@@ -20,9 +20,9 @@ Basic setup to have Bind as catalog-zone primary server:
 ## Step 3: Additional
 - Install dnspython
 - Place `add.py` and `del.py` in `/usr/local/etc/named`
-- Run `./add.py example.org 12345678`
+- Run `./add.py example.com 12345678`
 - Test `dig @127.0.0.1 example.com` - should return NOERROR
 - Test `dig @127.0.0.2 example.com` - should return NOERROR (on condition you run already a secondary)
-- Run `./del.py example.org 12345678`
+- Run `./del.py example.com 12345678`
 - Test `dig @127.0.0.1 example.com` - should return NXDOMAIN
 - Test `dig @127.0.0.2 example.com` - should return NXDOMAIN (on condition you run already a secondary)
