@@ -1,4 +1,4 @@
-$ORIGIN example.com.
+$ORIGIN example.org.
 $TTL 86400
 @	SOA	ns1 hostmaster ( 2020022222 21600 3600 604800 86400 )
 	NS	ns1
