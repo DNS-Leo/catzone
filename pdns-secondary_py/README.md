@@ -33,3 +33,6 @@ Requires catzone SOA serial to be epoch - since it's needed to make comparisons.
 ## filesystem
 The max. number of file in a directory on a UFS file-system seems 32,767.
 So beyond that you wish to use something better, probably ZFS.
+
+## gencat-v2.py
+Mind: is NOT cleaning up zonefiles after they are removed.
