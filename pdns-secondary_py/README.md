@@ -1,4 +1,4 @@
-## setup
+## Setup
 `mkdir -p /usr/local/etc/pdns/zones`
 
 `mv pdns.conf /usr/local/etc/pdns`
