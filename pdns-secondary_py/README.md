@@ -1,11 +1,11 @@
 ## setup
 `mkdir -p /usr/local/etc/pdns/zones`
 
-put pdns.conf in /usr/local/etc/pdns
+`mv pdns.conf /usr/local/etc/pdns`
 
-put bind.conf in /usr/local/etc/pdns
+`mv bind.conf in /usr/local/etc/pdns`
 
-put gencat-v2.py in /usr/local/etc/pdns
+`mv gencat-v2.py in /usr/local/etc/pdns`
 
 `pdnsutil create-bind-db /usr/local/etc/pdns/bind-dnssec.db`
 
@@ -28,7 +28,7 @@ It's important that the sqlite db has the same user as the pdns daemon is runnin
 `ls zones`
 
 ## SOA serial
-requires catzone SOA serial to be epoch
+Requires catzone SOA serial to be epoch - since it's needed to make comparisons.
 
 ## filesystem
 The max. number of file in a directory on a UFS file-system seems 32,767.
